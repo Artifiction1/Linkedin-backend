@@ -93,7 +93,7 @@ usersRouter.post("/:userId/experiences", async (req,res,next)=>{
     try {
       const user = await UsersModel.findById(req.params.userId).populate({path:"experiences"});
       if (user) {
-        res.send(user);
+        res.send(user.experiences);
       } else {
         next(
           createHttpError(404, `User with id ${req.params.userId} not found!`)
