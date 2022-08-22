@@ -4,6 +4,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import { badRequestHandler, genericErrorHandler, notFoundHandler } from "./errorHandlers.js"
 import usersRouter from './api/users/index.js'
+import postsRouter from './api/posts/index.js'
 
 const server = express()
 
@@ -12,7 +13,7 @@ server.use(cors())
 server.use(express.json())
 
 server.use("/users", usersRouter)
-// server.use("/posts", postsRouter)
+server.use("/posts", postsRouter)
 
 server.use(badRequestHandler)
 server.use(notFoundHandler)

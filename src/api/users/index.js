@@ -1,6 +1,7 @@
 import express from "express";
 import UsersModel from "./model.js";
-
+import ExperiencesModel from "./exp.js";
+import createHttpError from "http-errors"
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res, next) => {
@@ -15,7 +16,7 @@ usersRouter.post("/", async (req, res, next) => {
 
 usersRouter.get("/", async (req, res, next) => {
   try {
-    const users = await UsersModel.find();
+    const users = await UsersModel.find().populate({path:"experiences"});
     res.send(users);
   } catch (error) {
     next(error);
@@ -24,7 +25,7 @@ usersRouter.get("/", async (req, res, next) => {
 
 usersRouter.get("/:userId", async (req, res, next) => {
   try {
-    const user = await UsersModel.findById(req.params.userId);
+    const user = await UsersModel.findById(req.params.userId).populate({path:"experiences"});
     if (user) {
       res.send(user);
     } else {
@@ -66,5 +67,41 @@ usersRouter.delete("/:userId", async (req, res, next) => {
     next(error);
   }
 });
+
+usersRouter.post("/:userId/experiences", async (req,res,next)=>{
+    try {
+        const newExperience = new ExperiencesModel(req.body);
+        const { _id } = await newExperience.save();
+        res.status(201).send({ _id });
+    
+  
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  usersRouter.get("/all/experiences", async (req, res, next) => {
+    try {
+      const experiences = await ExperiencesModel.find();
+      res.send(experiences);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  usersRouter.get("/:userId/experiences", async (req, res, next) => {
+    try {
+      const user = await UsersModel.findById(req.params.userId).populate({path:"experiences"});
+      if (user) {
+        res.send(user);
+      } else {
+        next(
+          createHttpError(404, `User with id ${req.params.userId} not found!`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  });
 
 export default usersRouter;

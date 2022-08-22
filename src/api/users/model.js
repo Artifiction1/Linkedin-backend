@@ -15,7 +15,8 @@ const usersSchema = new Schema(
         title:{type:String, required:true},
         area:{type:String, required:true},
         image: {type:String, required:true},
-        username: {type: String , required:true, unique:true}
+        username: {type: String , required:true, unique:true},
+        experiences:[{type: Schema.Types.ObjectId, required:true, ref:"Experience"}]
     },
     {
         timestamps: true,
