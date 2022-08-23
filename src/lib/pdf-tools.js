@@ -12,9 +12,9 @@ export const getPDFReadableStream = usersArray => {
   const printer = new PdfPrinter(fonts)
 
   const tableContent = [
-    ["TITLE", "CATEGORY"],
+    ["NAME", "SURNAME","BIO","TITLE","EXPERIENCES"],
     ...usersArray.map(user => {
-      return [user.name, user.surname, user.bio, user.title, user.experiences]
+      return [user.name, user.surname, user.bio, user.title, user.experiences[0]?.role || "no job"]
     }),
   ]
 
