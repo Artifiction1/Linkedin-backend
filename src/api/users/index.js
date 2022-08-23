@@ -2,6 +2,8 @@ import express from "express";
 import UsersModel from "./model.js";
 import ExperiencesModel from "./exp.js";
 import createHttpError from "http-errors";
+import { getPDFReadableStream } from "../../lib/pdf-tools.js";
+import { pipeline } from "stream"
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res, next) => {
@@ -202,6 +204,23 @@ try {
   next(error);
 }
 })
- 
+
+
+usersRouter.get("/download/PDF", async (req, res, next) => {
+  try {
+    
+
+    const users = await UsersModel.find().populate({ path: "experiences" });
+
+    res.setHeader("Content-Disposition", "attachment; filename=users.pdf")
+    const source = getPDFReadableStream(users)
+    const destination = res
+    pipeline(source, destination, err => {
+      if (err) console.log(err)
+    })
+  } catch (error) {
+    next(error)
+  }
+})
 
 export default usersRouter;
