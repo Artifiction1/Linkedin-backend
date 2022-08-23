@@ -4,6 +4,22 @@ import ExperiencesModel from "./exp.js";
 import createHttpError from "http-errors";
 import { getPDFReadableStream } from "../../lib/pdf-tools.js";
 import { pipeline } from "stream"
+import {v2 as cloudinary } from "cloudinary"
+import {CloudinaryStorage } from "multer-storage-cloudinary"
+import multer from "multer";
+
+
+
+const cloudinaryUploader = multer({
+  storage: new CloudinaryStorage({
+    cloudinary, 
+    params: {
+      folder: "august2022/users",
+    },
+  }),
+  limits: { fileSize: 1024 * 1024 },
+}).single("avatar");
+
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res, next) => {
@@ -222,5 +238,20 @@ usersRouter.get("/download/PDF", async (req, res, next) => {
     next(error)
   }
 })
+
+usersRouter.post("/cloudinary", cloudinaryUploader, async (req,res,next)=>{
+  try {
+    
+console.log("REQ FILE: ", req.file)
+// 1. upload on Cloudinary happens automatically
+    // 2. req.file contains the path which is the url where to find that picture
+    // 3. update the resource by adding the path to it
+res.send()
+
+  } catch (error) {
+    next(error)
+  }
+} )
+
 
 export default usersRouter;
