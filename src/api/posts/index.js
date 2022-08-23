@@ -16,6 +16,9 @@ postsRouter.post("/", async (req, res, next) => {
 postsRouter.get("/", async (req, res, next) => {
   try {
     const posts = await PostsModel.find().populate({ path: "users" });
+    // posts.forEach() for each post we neeed to find the username and we need to find the user with that username
+    // findone usersModel
+    //current.user = userfound
     res.send(posts);
   } catch (error) {
     next(error);
