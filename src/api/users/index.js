@@ -14,7 +14,7 @@ const cloudinaryUploader = multer({
   storage: new CloudinaryStorage({
     cloudinary, 
     params: {
-      folder: "august2022/users",
+      folder: "linkedin",
     },
   }),
   limits: { fileSize: 1024 * 1024 },
@@ -25,6 +25,7 @@ const usersRouter = express.Router();
 usersRouter.post("/", async (req, res, next) => {
   try {
     const newUser = new UsersModel(req.body);
+    newUser.image = "https://res.cloudinary.com/artifcloud/image/upload/v1661344550/linkedin/gux5brh73imv0stfapsc.png";
     const { _id } = await newUser.save();
     res.status(201).send({ _id });
   } catch (error) {
@@ -239,10 +240,23 @@ usersRouter.get("/download/PDF", async (req, res, next) => {
   }
 })
 
-usersRouter.post("/cloudinary", cloudinaryUploader, async (req,res,next)=>{
+usersRouter.post("/:userId/cloudinary", cloudinaryUploader, async (req,res,next)=>{
   try {
     
 console.log("REQ FILE: ", req.file)
+console.log("Link:", req.file.path )
+
+const user = await UsersModel.findById(req.params.userId)
+if (user) {
+  
+  user.image = req.file.path;
+  user.save()
+  console.log(user)
+} else {
+  next(
+    createHttpError(404, `User with id ${req.params.userId} not found!`)
+  );
+}
 // 1. upload on Cloudinary happens automatically
     // 2. req.file contains the path which is the url where to find that picture
     // 3. update the resource by adding the path to it
