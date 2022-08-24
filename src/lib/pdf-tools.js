@@ -14,7 +14,7 @@ export const getPDFReadableStream = usersArray => {
   const tableContent = [
     ["NAME", "SURNAME","BIO","TITLE","EXPERIENCES"],
     ...usersArray.map(user => {
-      return [user.name, user.surname, user.bio, user.title, user.experiences[0]?.role || "no job"]
+      return [user.name, user.surname, user.bio, user.title, user.experiences[0]?.role || "no experience"]
     }),
   ]
 
