@@ -248,10 +248,10 @@ console.log("Link:", req.file.path )
 
 const user = await UsersModel.findById(req.params.userId)
 if (user) {
-  
-  user.image = req.file.path;
-  user.save()
+  user.image = req.file.path; 
   console.log(user)
+  user.save()
+ 
 } else {
   next(
     createHttpError(404, `User with id ${req.params.userId} not found!`)
