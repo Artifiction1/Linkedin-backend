@@ -21,6 +21,16 @@ const cloudinaryUploader = multer({
   limits: { fileSize: 1024 * 1024 },
 }).single("avatar");
 
+const cloudinaryExpUploader = multer({
+  storage: new CloudinaryStorage({
+    cloudinary, 
+    params: {
+      folder: "linkedin/experience",
+    },
+  }),
+  limits: { fileSize: 1024 * 1024 },
+}).single("experience");
+
 const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res, next) => {
@@ -258,6 +268,33 @@ if (user) {
 } else {
   next(
     createHttpError(404, `User with id ${req.params.userId} not found!`)
+  );
+}
+// 1. upload on Cloudinary happens automatically
+    // 2. req.file contains the path which is the url where to find that picture
+    // 3. update the resource by adding the path to it
+res.send()
+
+  } catch (error) {
+    next(error)
+  }
+} )
+
+usersRouter.post("/experiences/:experienceId/cloudinary", cloudinaryExpUploader, async (req,res,next)=>{
+  try {
+    
+// console.log("REQ FILE: ", req.file)
+// console.log("Link:", req.file.path )
+
+const experience = await ExperiencesModel.findById(req.params.experienceId)
+if (experience) {
+  experience.image = req.file.path; 
+// console.log(user)
+experience.save()
+ 
+} else {
+  next(
+    createHttpError(404, `Experience with id ${req.params.experienceId} not found!`)
   );
 }
 // 1. upload on Cloudinary happens automatically
