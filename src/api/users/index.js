@@ -14,7 +14,7 @@ const cloudinaryUploader = multer({
   storage: new CloudinaryStorage({
     cloudinary, 
     params: {
-      folder: "linkedin",
+      folder: "linkedin/users",
     },
   }),
   limits: { fileSize: 1024 * 1024 },
@@ -223,14 +223,16 @@ try {
 })
 
 
-usersRouter.get("/download/PDF", async (req, res, next) => {
+usersRouter.get("/:userId/download/PDF", async (req, res, next) => {
   try {
-    
-
+    const userId = req.params.userId
+    console.log("userId:",userId)
     const users = await UsersModel.find().populate({ path: "experiences" });
-
+    console.log("users:",users)
+    const foundUser = users.find(user => user._id.toString() === userId)
     res.setHeader("Content-Disposition", "attachment; filename=users.pdf")
-    const source = getPDFReadableStream(users)
+    console.log("foundUser:",foundUser)
+    const source = getPDFReadableStream(foundUser)
     const destination = res
     pipeline(source, destination, err => {
       if (err) console.log(err)
@@ -248,10 +250,10 @@ console.log("Link:", req.file.path )
 
 const user = await UsersModel.findById(req.params.userId)
 if (user) {
-  
-  user.image = req.file.path;
-  user.save()
+  user.image = req.file.path; 
   console.log(user)
+  user.save()
+ 
 } else {
   next(
     createHttpError(404, `User with id ${req.params.userId} not found!`)
