@@ -14,7 +14,7 @@ const cloudinaryUploader = multer({
   storage: new CloudinaryStorage({
     cloudinary, 
     params: {
-      folder: "linkedin",
+      folder: "linkedin/users",
     },
   }),
   limits: { fileSize: 1024 * 1024 },
