@@ -7,6 +7,7 @@ import { pipeline } from "stream"
 import {v2 as cloudinary } from "cloudinary"
 import {CloudinaryStorage } from "multer-storage-cloudinary"
 import multer from "multer";
+import json2csv from "json2csv"
 
 
 
@@ -267,5 +268,30 @@ res.send()
   }
 } )
 
+usersRouter.get("/:userId/CSV", async (req, res, next) => {
+  try {
+
+    const user = await UsersModel.findById(req.params.userId).populate({
+      path: "experiences",
+    });
+    if (user) {
+        
+    res.setHeader("Content-Disposition", "attachment; filename=usersexperiences.csv") 
+    const source = JSON.stringify(user.experiences)
+    const destination = res
+    const transform = new json2csv.Transform({ fields: ["role", "company", "description"] })
+
+    pipeline(source, transform, destination, err => {
+      if (err) console.log(err)
+    })
+    } else {
+      next(
+        createHttpError(404, `User with id ${req.params.userId} not found!`)
+      );
+    }
+  } catch (error) {
+    next(error)
+  }
+})
 
 export default usersRouter;
