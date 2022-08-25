@@ -26,7 +26,7 @@ const usersRouter = express.Router();
 usersRouter.post("/", async (req, res, next) => {
   try {
     const newUser = new UsersModel(req.body);
-    newUser.image = "https://res.cloudinary.com/artifcloud/image/upload/v1661344550/linkedin/gux5brh73imv0stfapsc.png";
+    newUser.image = process.env.defaultPicture;
     const { _id } = await newUser.save();
     res.status(201).send({ _id });
   } catch (error) {
@@ -246,13 +246,13 @@ usersRouter.get("/:userId/download/PDF", async (req, res, next) => {
 usersRouter.post("/:userId/cloudinary", cloudinaryUploader, async (req,res,next)=>{
   try {
     
-console.log("REQ FILE: ", req.file)
-console.log("Link:", req.file.path )
+// console.log("REQ FILE: ", req.file)
+// console.log("Link:", req.file.path )
 
 const user = await UsersModel.findById(req.params.userId)
 if (user) {
   user.image = req.file.path; 
-  console.log(user)
+// console.log(user)
   user.save()
  
 } else {

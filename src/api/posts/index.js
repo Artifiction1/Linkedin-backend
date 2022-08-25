@@ -34,7 +34,7 @@ postsRouter.get("/", async (req, res, next) => {
   try {
     //const posts = await PostsModel.find().populate({ path: "users" });
     const posts = await PostsModel.find()
-    const users = await UsersModel.find()
+    const users = await UsersModel.find().populate({ path: "experiences" })
     //console.log(posts)
     posts.forEach(
         post =>{
@@ -95,13 +95,13 @@ postsRouter.delete("/:postId", async (req, res, next) => {
 postsRouter.post("/:postId/cloudinary", cloudinaryUploader, async (req,res,next)=>{
   try {
     
-console.log("REQ FILE: ", req.file)
-console.log("Link:", req.file.path )
+// console.log("REQ FILE: ", req.file)
+// console.log("Link:", req.file.path )
 
 const post = await PostsModel.findById(req.params.postId)
-if (post) {
+if (post){
   post.image = req.file.path; 
-  console.log(post)
+//  console.log(post)
   post.save()
  
 } else {
